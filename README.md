@@ -53,7 +53,7 @@
 
 ```
 SmartParking/
-├── CMakeLists.txt                  # CMake 构建配置
+├── CMakeLists.txt                  # CMake 构建配置（GLOB 收集 src/*.cpp）
 ├── CMakePresets.json               # CMake 预设（Visual Studio 2022）
 ├── conanfile.txt                   # Conan 依赖声明
 ├── config/
@@ -62,37 +62,37 @@ SmartParking/
 │   └── init.sql                    # 数据库初始化 SQL（手动执行用）
 ├── src/
 │   ├── main.cpp                    # 入口：启动服务器、注册路由、静态文件服务
-│   ├── config.h                    # 运行时配置（单例，JSON 持久化，线程安全）
-│   ├── sha256.h                    # SHA-256 自实现
+│   ├── config.h / .cpp             # 运行时配置（单例，JSON 持久化，线程安全）
+│   ├── sha256.h                    # SHA-256 自实现（header-only）
 │   ├── permissions.h               # 权限节点与角色-权限映射
-│   ├── controller/                 # 控制器层
-│   │   ├── base_controller.h       #   基类：鉴权、权限检查、序列化辅助
-│   │   ├── auth_controller.h       #   登录/注册/登出
-│   │   ├── vehicle_controller.h    #   车辆出入库、查询、导出
-│   │   ├── parking_controller.h    #   停车场状态、设置、计费规则、月卡
-│   │   ├── user_controller.h       #   用户 CRUD
-│   │   ├── reservation_controller.h #  预约创建/取消
-│   │   ├── plate_controller.h      #   车牌识别（预留）
-│   │   ├── balance_controller.h    #   余额查询、充值、交易记录
-│   │   ├── pass_plan_controller.h  #   套餐管理、购买
-│   │   ├── blacklist_controller.h  #   黑名单 CRUD
-│   │   ├── report_controller.h     #   收入统计
-│   │   └── bulletin_controller.h   #   公告读取/编辑
-│   ├── service/                    # 服务层
-│   │   ├── base_service.h          #   基类：连接池、SQL 转义辅助
-│   │   ├── crud_service.h          #   通用 CRUD 模板
-│   │   ├── auth_service.h          #   认证、Token 管理
-│   │   ├── vehicle_service.h       #   出入库逻辑、计费计算
-│   │   ├── parking_service.h       #   停车场数据
-│   │   ├── billing_service.h       #   计费规则、月卡 CRUD
-│   │   ├── user_service.h          #   用户 CRUD
-│   │   ├── reservation_service.h   #   预约业务
-│   │   ├── plate_service.h         #   车牌验证
-│   │   ├── balance_service.h       #   余额原子操作
-│   │   ├── pass_plan_service.h     #   套餐购买
-│   │   ├── blacklist_service.h     #   黑名单
-│   │   └── report_service.h        #   财务统计
-│   ├── model/                      # 数据模型
+│   ├── controller/                 # 控制器层（路由注册 + 请求处理）
+│   │   ├── base_controller.h/cpp   #   基类：鉴权、权限检查、序列化辅助
+│   │   ├── auth_controller.h/cpp   #   登录/注册/登出
+│   │   ├── vehicle_controller.h/cpp#   车辆出入库、查询、导出
+│   │   ├── parking_controller.h/cpp#   停车场状态、设置、计费规则、月卡
+│   │   ├── user_controller.h/cpp   #   用户 CRUD
+│   │   ├── reservation_controller.h/cpp# 预约创建/取消
+│   │   ├── plate_controller.h/cpp  #   车牌识别（预留）
+│   │   ├── balance_controller.h/cpp#   余额查询、充值、交易记录
+│   │   ├── pass_plan_controller.h/cpp # 套餐管理、购买
+│   │   ├── blacklist_controller.h/cpp # 黑名单 CRUD
+│   │   ├── report_controller.h/cpp #   收入统计
+│   │   └── bulletin_controller.h/cpp#  公告读取/编辑
+│   ├── service/                    # 服务层（业务逻辑）
+│   │   ├── base_service.h/cpp      #   基类：连接池、SQL 转义辅助
+│   │   ├── crud_service.h          #   通用 CRUD 模板（header-only 模板）
+│   │   ├── auth_service.h/cpp      #   认证、Token 管理
+│   │   ├── vehicle_service.h/cpp   #   出入库逻辑、计费计算
+│   │   ├── parking_service.h/cpp   #   停车场数据
+│   │   ├── billing_service.h/cpp   #   计费规则、月卡 CRUD
+│   │   ├── user_service.h/cpp      #   用户 CRUD
+│   │   ├── reservation_service.h/cpp#  预约业务
+│   │   ├── plate_service.h/cpp     #   车牌验证
+│   │   ├── balance_service.h/cpp   #   余额原子操作
+│   │   ├── pass_plan_service.h/cpp #   套餐购买
+│   │   ├── blacklist_service.h/cpp #   黑名单
+│   │   └── report_service.h/cpp    #   财务统计
+│   ├── model/                      # 数据模型（header-only，简单小巧）
 │   │   ├── base_model.h            #   抽象基类
 │   │   ├── user.h                  #   用户模型
 │   │   ├── car_record.h            #   停车记录
@@ -102,8 +102,8 @@ SmartParking/
 │   │   ├── balance_record.h        #   余额变动记录
 │   │   └── blacklist.h             #   黑名单
 │   └── database/
-│       ├── mysql_pool.h            # 连接池
-│       └── db_init.h               # 自动建库建表
+│       ├── mysql_pool.h/cpp        # 连接池
+│       └── db_init.h/cpp           # 自动建库建表
 ├── frontend/
 │   ├── index.html                  # 登录页
 │   ├── register.html               # 注册页
@@ -124,6 +124,98 @@ SmartParking/
 │       └── profile.js              # 个人中心
 └── third_party/                    # 第三方库（header-only）
     └── crow.h, crow/               # Crow Web 框架
+```
+
+## 团队协作指南
+
+### 模块划分
+
+项目按业务垂直分为 6 个独立模块，每人负责 2-4 个文件：
+
+| 人员 | 模块 | 负责文件 | 前端页面 |
+|------|------|----------|----------|
+| **A** | 基础架构 | `CMakeLists.txt`, `config.h/cpp`, `main.cpp`, `database/` 全部 | — |
+| **B** | 用户与权限 | `auth_service`, `user_service`, `auth_controller`, `user_controller`, `permissions.h` | `index.html`, `register.html`, `profile.html/js` |
+| **C** | 停车核心 | `vehicle_service`, `parking_service`, `vehicle_controller`, `parking_controller` | `dashboard.html/js`（出入库+车位部分）, `vehicles.html/js` |
+| **D** | 计费与余额 | `balance_service`, `billing_service`, `pass_plan_service`, `balance_controller`, `billing_controller` | `admin.html`（计费/月卡/套餐标签页）, `dashboard.js`（充值弹窗） |
+| **E** | 增值功能 | `reservation_service`, `blacklist_service`, `report_service`, `reservation_controller` 等 | `reservation.html`, `admin.html`（黑名单/报表/公告） |
+| **F** | 前端统一 | `common.js`, `style.css`, 全局布局、组件规范 | 所有页面的侧边栏、导航、交互规范 |
+
+### 分支策略
+
+```
+main                        ← 稳定发布分支，只有 PR 合入
+├── feat/vehicle-checkin    ← C 开发：车辆入库功能
+├── feat/user-profile       ← B 开发：个人中心
+├── fix/balance-overcharge  ← D 修复：余额多扣
+└── chore/cmake-update      ← A 更新：构建系统
+```
+
+- **功能分支**：从 `main` 创建 `feat/<模块>-<功能名>`
+- **Bug 修复**：从 `main` 创建 `fix/<问题描述>`
+- **合入流程**：功能开发完成 → 创建 PR → 至少 1 人 Review → 合并到 `main`
+
+### 日常开发流程
+
+```
+# 1. 拉取最新代码
+git checkout main
+git pull
+
+# 2. 创建功能分支
+git checkout -b feat/vehicle-export
+
+# 3. 开发，频繁提交
+git add src/controller/vehicle_controller.cpp
+git commit -m "feat: 添加车辆导出 CSV 功能"
+
+# 4. 推送并创建 PR
+git push origin feat/vehicle-export
+# 浏览器中创建 Pull Request
+
+# 5. Review 通过后合并到 main
+```
+
+### 避免冲突的约定
+
+1. **.h 文件改动需要通知所有人** — 头文件声明变更会影响所有包含它的 .cpp
+2. **Model 层大家一起维护** — 改模型字段需要在群里同步
+3. **前端各改各的页面** — HTML 和 JS 按页面分，基本不会冲突
+4. **公共工具（common.js / base_service）先讨论再改** — 涉及接口约定的改动需要达成一致
+5. **每天至少 git pull 一次** — 及时发现冲突，及时解决
+
+### 示例：多人并行开发
+
+假设你们要做三个功能：
+
+- A 改数据库连接池，需要改 `mysql_pool.h/cpp`
+- C 改车辆入库逻辑，需要改 `vehicle_service.h/cpp`
+- D 新增计费规则类型，需要改 `billing_service.h/cpp`
+
+三个人各自从 main 开分支，改自己的 .cpp 文件。A 改了 mysql_pool.h 的接口声明，C 和 D 合代码时如果发现调用处需要更新，改对应的一两行就行。**不会出现两个人同时改同一个 300 行的大文件的情况。**
+
+## 构建说明
+
+### 从零构建
+
+```bash
+conan install . --output-folder=build --build=missing
+cmake -B build -S . --preset conan-default
+cmake --build build --config Release
+```
+
+### 增量构建（开发时）
+
+```bash
+cmake --build build --config Release
+```
+
+CMake 会自动检测修改过的 .cpp 文件，只重新编译对应的文件，然后链接。改动一个小的 service 文件通常在几秒内完成。
+
+### 只编译某个文件（检查语法）
+
+```bash
+cl /c src/service/vehicle_service.cpp /I src /I third_party /I "C:/Program Files/MySQL/MySQL Server 8.0/include"
 ```
 
 ## 环境要求
